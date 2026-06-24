@@ -6,7 +6,6 @@ import DeviceList from './DeviceList.jsx';
 import Uploader from './Uploader.jsx';
 import SenderImage from './SenderImage.jsx';
 import ReceiveLayer from './ReceiveLayer.jsx';
-import FullscreenViewer from './FullscreenViewer.jsx';
 import QRPanel from './QRPanel.jsx';
 import { useRoom } from '../hooks/useRoom.js';
 import { useStore } from '../store/useStore.js';
@@ -19,8 +18,6 @@ export default function Room() {
   const selfId = useStore((s) => s.selfId);
   const heldImage = useStore((s) => s.heldImage);
   const incoming = useStore((s) => s.incoming);
-  const fullscreenImage = useStore((s) => s.fullscreenImage);
-
   const [picked, setPicked] = useState(null);
   const [showInvite, setShowInvite] = useState(false);
 
@@ -64,10 +61,6 @@ export default function Room() {
           <div className="stage-hint mono">receiving · {incoming.name || 'image'}</div>
         )}
       </main>
-
-      <AnimatePresence>
-        {fullscreenImage && <FullscreenViewer key="fsv" />}
-      </AnimatePresence>
 
       <AnimatePresence>
         {(showInvite || alone) && (
