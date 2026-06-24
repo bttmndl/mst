@@ -29,6 +29,7 @@ export function useRoom(roomId) {
   const setIncomingProgress = useStore((s) => s.setIncomingProgress);
   const commitIncoming = useStore((s) => s.commitIncoming);
   const cancelIncoming = useStore((s) => s.cancelIncoming);
+  const setFullscreenImage = useStore((s) => s.setFullscreenImage);
 
   useEffect(() => {
     if (!roomId) return;
@@ -87,6 +88,14 @@ export function useRoom(roomId) {
       tweenProgress(cur, 0, 240, (v) => setIncomingProgress(v), () => cancelIncoming());
     };
 
+    const onFullscreen = (payload) => {
+      setFullscreenImage({
+        id: payload.imageId,
+        dataUrl: payload.dataUrl,
+        name: payload.name,
+      });
+    };
+
     socket.on('connect', onConnect);
     socket.on('disconnect', onDisconnect);
     socket.on('presence:update', onPresence);
@@ -94,6 +103,7 @@ export function useRoom(roomId) {
     socket.on('transfer:progress', onProgress);
     socket.on('transfer:commit', onCommit);
     socket.on('transfer:cancel', onCancel);
+    socket.on('fullscreen:show', onFullscreen);
 
     if (socket.connected) onConnect();
 
@@ -107,6 +117,7 @@ export function useRoom(roomId) {
       socket.off('transfer:progress', onProgress);
       socket.off('transfer:commit', onCommit);
       socket.off('transfer:cancel', onCancel);
+      socket.off('fullscreen:show', onFullscreen);
     };
   }, [roomId]);
 }

@@ -9,12 +9,20 @@ import {
 import { socket } from '../sockets/socket.js';
 import { useStore } from '../store/useStore.js';
 
+const FullscreenIcon = () => (
+  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" aria-hidden>
+    <path d="M8 3H5a2 2 0 00-2 2v3m18 0V5a2 2 0 00-2-2h-3m0 18h3a2 2 0 002-2v-3M3 16v3a2 2 0 002 2h3"
+      stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+  </svg>
+);
+
 const COMMIT_THRESHOLD = 0.45; // release past this to send
 const THROW_VELOCITY = 1100; // px/s fast-swipe shortcut
 
 export default function SenderImage({ targetId }) {
   const held = useStore((s) => s.heldImage);
   const setHeldImage = useStore((s) => s.setHeldImage);
+  const setFullscreenImage = useStore((s) => s.setFullscreenImage);
 
   const x = useMotionValue(0);
   const y = useMotionValue(0);
@@ -141,9 +149,47 @@ export default function SenderImage({ targetId }) {
       whileTap={{ cursor: 'grabbing' }}
     >
       <img src={held.dataUrl} alt={held.name || 'image to transfer'} draggable={false} />
+
+      <button
+        className="fs-trigger-btn"
+        onPointerDown={(e) => e.stopPropagation()}
+        onClick={(e) => {
+          e.stopPropagation();
+          setFullscreenImage({ id: held.id, dataUrl: held.dataUrl, name: held.name });
+          socket.emit('fullscreen:show', {
+            imageId: held.id,
+            dataUrl: held.dataUrl,
+            name: held.name,
+          });
+          if (navigator.vibrate) navigator.vibrate(6);
+        }}
+        aria-label="View fullscreen on all devices"
+        title="View fullscreen on all devices"
+      >
+        <FullscreenIcon />
+      </button>
+
       <div className="grab-hint">
         {targetId ? 'Drag toward a device to send' : 'Waiting for another device…'}
       </div>
+      <button
+        className="download-btn"
+        onClick={(e) => {
+          e.stopPropagation();
+          const a = document.createElement('a');
+          a.href = held.dataUrl;
+          a.download = held.name || 'image.jpg';
+          a.click();
+        }}
+        aria-label="Download image"
+        title="Download image"
+      >
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden>
+          <path d="M12 4v12m0 0l-4-4m4 4l4-4" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+          <path d="M4 16v2a2 2 0 002 2h12a2 2 0 002-2v-2" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+        </svg>
+        Download
+      </button>
     </motion.div>
   );
 }

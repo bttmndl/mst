@@ -70,6 +70,12 @@ export function registerHandlers(io, socket) {
     socket.to(currentRoom).emit('transfer:cancel', { ...payload, fromId: socket.id });
   });
 
+  // Fullscreen: broadcast the full-screen view to all peers in the room.
+  socket.on('fullscreen:show', (payload) => {
+    if (!currentRoom) return;
+    socket.to(currentRoom).emit('fullscreen:show', { ...payload, fromId: socket.id });
+  });
+
   // WebRTC offer/answer/ICE relay (P2P upgrade path).
   registerSignaling(io, socket);
 
