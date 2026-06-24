@@ -1,0 +1,178 @@
+:root {
+  /* Type */
+  --font-display: 'Space Grotesk', system-ui, sans-serif;
+  --font-body: 'Inter', system-ui, sans-serif;
+  --font-mono: 'JetBrains Mono', ui-monospace, monospace;
+
+  /* Aurora accent — the transfer beam (constant across themes) */
+  --beam-from: #7c5cff;
+  --beam-to: #34e5ff;
+  --beam: linear-gradient(120deg, var(--beam-from), var(--beam-to));
+  --beam-soft: radial-gradient(60% 100% at 50% 0%, rgba(124, 92, 255, 0.5), transparent 70%);
+
+  --radius: 22px;
+  --radius-sm: 14px;
+  --ease: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+:root[data-theme='dark'] {
+  --bg: #0b0d14;
+  --bg-grad: radial-gradient(120% 80% at 50% -10%, #161a2b 0%, #0b0d14 55%);
+  --surface: rgba(255, 255, 255, 0.06);
+  --surface-strong: rgba(255, 255, 255, 0.1);
+  --border: rgba(255, 255, 255, 0.12);
+  --ink: #eef1f8;
+  --ink-soft: #9aa3bd;
+  --ink-faint: #5d6685;
+  --shadow: 0 24px 60px -24px rgba(0, 0, 0, 0.8);
+  --glass-blur: 22px;
+}
+
+:root[data-theme='light'] {
+  --bg: #eef0f6;
+  --bg-grad: radial-gradient(120% 80% at 50% -10%, #ffffff 0%, #e7eaf3 60%);
+  --surface: rgba(255, 255, 255, 0.7);
+  --surface-strong: rgba(255, 255, 255, 0.9);
+  --border: rgba(20, 24, 40, 0.1);
+  --ink: #161a26;
+  --ink-soft: #555c70;
+  --ink-faint: #8b92a6;
+  --shadow: 0 24px 50px -28px rgba(40, 50, 90, 0.45);
+  --glass-blur: 18px;
+}
+
+* {
+  box-sizing: border-box;
+  -webkit-tap-highlight-color: transparent;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+  margin: 0;
+}
+
+body {
+  font-family: var(--font-body);
+  color: var(--ink);
+  background: var(--bg);
+  background-image: var(--bg-grad);
+  background-attachment: fixed;
+  overflow: hidden;
+  transition: background-color 0.4s var(--ease), color 0.4s var(--ease);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+#root {
+  display: flex;
+  flex-direction: column;
+  /* respect notches */
+  padding: env(safe-area-inset-top) env(safe-area-inset-right)
+    env(safe-area-inset-bottom) env(safe-area-inset-left);
+}
+
+h1,
+h2,
+h3 {
+  font-family: var(--font-display);
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  margin: 0;
+}
+
+button {
+  font-family: var(--font-body);
+  cursor: pointer;
+  border: none;
+  background: none;
+  color: inherit;
+}
+
+.glass {
+  background: var(--surface);
+  backdrop-filter: blur(var(--glass-blur)) saturate(140%);
+  -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(140%);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+}
+
+.mono {
+  font-family: var(--font-mono);
+  letter-spacing: 0.06em;
+}
+
+.beam-text {
+  background: var(--beam);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+/* Primary action */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  height: 52px;
+  padding: 0 1.4rem;
+  border-radius: var(--radius-sm);
+  font-weight: 600;
+  font-size: 1rem;
+  transition: transform 0.18s var(--ease), filter 0.18s var(--ease),
+    background 0.2s var(--ease);
+}
+.btn:active {
+  transform: scale(0.97);
+}
+.btn-primary {
+  background: var(--beam);
+  color: #0b0d14;
+  font-weight: 700;
+}
+.btn-primary:hover {
+  filter: brightness(1.08);
+}
+.btn-ghost {
+  background: var(--surface-strong);
+  border: 1px solid var(--border);
+  color: var(--ink);
+}
+
+input {
+  font-family: var(--font-mono);
+  font-size: 1.4rem;
+  letter-spacing: 0.18em;
+  text-align: center;
+  text-transform: uppercase;
+  width: 100%;
+  height: 56px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border);
+  background: var(--surface);
+  color: var(--ink);
+  outline: none;
+  transition: border-color 0.2s var(--ease);
+}
+input:focus {
+  border-color: var(--beam-from);
+}
+input::placeholder {
+  color: var(--ink-faint);
+  letter-spacing: 0.18em;
+}
+
+:focus-visible {
+  outline: 2px solid var(--beam-to);
+  outline-offset: 3px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.08s !important;
+  }
+}
