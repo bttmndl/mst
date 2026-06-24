@@ -156,15 +156,10 @@ export default function SenderImage({ targetId }) {
         onClick={(e) => {
           e.stopPropagation();
           setFullscreenImage({ id: held.id, dataUrl: held.dataUrl, name: held.name });
-          socket.emit('fullscreen:show', {
-            imageId: held.id,
-            dataUrl: held.dataUrl,
-            name: held.name,
-          });
           if (navigator.vibrate) navigator.vibrate(6);
         }}
-        aria-label="View fullscreen on all devices"
-        title="View fullscreen on all devices"
+        aria-label="View fullscreen"
+        title="View fullscreen"
       >
         <FullscreenIcon />
       </button>
