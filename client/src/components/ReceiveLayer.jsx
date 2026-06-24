@@ -12,6 +12,7 @@ export default function ReceiveLayer() {
   const progress = useStore((s) => s.incomingProgress);
   const axis = useStore((s) => s.incomingAxis);
   const dir = useStore((s) => s.incomingDir);
+  const incomingFullscreen = useStore((s) => s.incomingFullscreen);
 
   if (!incoming) return null;
 
@@ -39,7 +40,7 @@ export default function ReceiveLayer() {
   const beamOpacity = Math.sin(Math.min(progress, 1) * Math.PI); // brightest mid-transfer
 
   return (
-    <div className="receive-layer" aria-live="polite">
+    <div className={`receive-layer${incomingFullscreen ? ' fs' : ''}`} aria-live="polite">
       <div className={`receive-frame edge-anchor-${edge}`} style={pos}>
         <img
           src={incoming.dataUrl}

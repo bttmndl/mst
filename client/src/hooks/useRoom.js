@@ -67,7 +67,7 @@ export function useRoom(roomId) {
         height: img.height,
         name: img.name,
         fromId: img.fromId,
-      });
+      }, !!img.fullscreen);
     };
 
     const onProgress = (p) => {

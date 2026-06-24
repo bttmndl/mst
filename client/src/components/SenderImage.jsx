@@ -80,6 +80,7 @@ export default function SenderImage({ targetId }) {
       height: held.height,
       name: held.name,
       targetId,
+      fullscreen: isFullscreen,
     });
   }
 

@@ -25,6 +25,8 @@ export const useStore = create((set) => ({
   incomingProgress: 0,
   incomingAxis: 'x',
   incomingDir: 1,
+  // whether the current incoming transfer was started in fullscreen mode
+  incomingFullscreen: false,
 
   // when true, SenderImage auto-enters fullscreen on the next committed image
   pendingFullscreen: false,
@@ -36,8 +38,8 @@ export const useStore = create((set) => ({
   setFullscreenImage: (img) => set({ fullscreenImage: img }),
   clearFullscreenImage: () => set({ fullscreenImage: null }),
 
-  beginIncoming: (img) =>
-    set({ incoming: img, incomingProgress: 0 }),
+  beginIncoming: (img, fullscreen = false) =>
+    set({ incoming: img, incomingProgress: 0, incomingFullscreen: fullscreen }),
   setIncomingProgress: (p, axis, dir) =>
     set((st) => ({
       incomingProgress: p,
@@ -47,10 +49,10 @@ export const useStore = create((set) => ({
   commitIncoming: (fullscreen = false) =>
     set((st) =>
       st.incoming
-        ? { heldImage: { ...st.incoming }, incoming: null, incomingProgress: 0, pendingFullscreen: fullscreen }
+        ? { heldImage: { ...st.incoming }, incoming: null, incomingProgress: 0, incomingFullscreen: false, pendingFullscreen: fullscreen }
         : {}
     ),
-  cancelIncoming: () => set({ incoming: null, incomingProgress: 0 }),
+  cancelIncoming: () => set({ incoming: null, incomingProgress: 0, incomingFullscreen: false }),
 
   reset: () =>
     set({
@@ -60,6 +62,7 @@ export const useStore = create((set) => ({
       fullscreenImage: null,
       incoming: null,
       incomingProgress: 0,
+      incomingFullscreen: false,
       pendingFullscreen: false,
     }),
 }));
