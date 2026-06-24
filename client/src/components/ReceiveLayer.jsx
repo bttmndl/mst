@@ -1,3 +1,4 @@
+import { useRef } from 'react';
 import { useStore } from '../store/useStore.js';
 
 // Sender drag direction → which edge the image enters from on the receiver.
@@ -37,10 +38,31 @@ export default function ReceiveLayer() {
 
   const beamClass = `edge-beam edge-${edge}`;
   const beamOpacity = Math.sin(Math.min(progress, 1) * Math.PI); // brightest mid-transfer
+  const frameRef = useRef(null);
+
+  function toggleFullscreen() {
+    const el = frameRef.current;
+    if (!el) return;
+    if (document.fullscreenElement) {
+      document.exitFullscreen?.();
+    } else if (el.requestFullscreen) {
+      el.requestFullscreen?.();
+    } else if (el.webkitRequestFullscreen) {
+      el.webkitRequestFullscreen?.();
+    }
+  }
 
   return (
     <div className="receive-layer" aria-live="polite">
-      <div className={`receive-frame edge-anchor-${edge}`} style={pos}>
+      <div
+        ref={frameRef}
+        className={`receive-frame edge-anchor-${edge}`}
+        style={pos}
+        onClick={toggleFullscreen}
+        role="button"
+        tabIndex={0}
+        onKeyDown={(e) => (e.key === 'Enter' || e.key === ' ') && toggleFullscreen()}
+      >
         <img
           src={incoming.dataUrl}
           alt={incoming.name || 'incoming image'}

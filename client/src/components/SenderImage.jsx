@@ -28,6 +28,7 @@ export default function SenderImage({ targetId }) {
   const lastEmit = useRef(0);
   const drag = useRef({ axis: 'x', dir: 1, progress: 0 });
   const reach = useRef(600);
+  const containerRef = useRef(null);
 
   useEffect(() => {
     const calc = () =>
@@ -118,6 +119,18 @@ export default function SenderImage({ targetId }) {
     }, 280);
   }
 
+  function toggleFullscreen() {
+    const el = containerRef.current;
+    if (!el) return;
+    if (document.fullscreenElement) {
+      document.exitFullscreen?.();
+    } else if (el.requestFullscreen) {
+      el.requestFullscreen?.();
+    } else if (el.webkitRequestFullscreen) {
+      el.webkitRequestFullscreen?.();
+    }
+  }
+
   function cancel() {
     if (targetId) socket.emit('transfer:cancel', { imageId: held.id, targetId });
     armed.current = false;
@@ -128,6 +141,7 @@ export default function SenderImage({ targetId }) {
 
   return (
     <motion.div
+      ref={containerRef}
       className="sender-image"
       drag
       dragMomentum={false}
@@ -140,6 +154,16 @@ export default function SenderImage({ targetId }) {
       transition={{ type: 'spring', stiffness: 400, damping: 28 }}
       whileTap={{ cursor: 'grabbing' }}
     >
+      <button
+        className="icon-btn fs-btn"
+        onClick={(e) => {
+          e.stopPropagation();
+          toggleFullscreen();
+        }}
+        aria-label="Full screen"
+      >
+        ⤢
+      </button>
       <img src={held.dataUrl} alt={held.name || 'image to transfer'} draggable={false} />
       <div className="grab-hint">
         {targetId ? 'Drag toward a device to send' : 'Waiting for another device…'}
