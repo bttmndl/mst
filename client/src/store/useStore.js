@@ -26,6 +26,9 @@ export const useStore = create((set) => ({
   incomingAxis: 'x',
   incomingDir: 1,
 
+  // when true, SenderImage auto-enters fullscreen on the next committed image
+  pendingFullscreen: false,
+
   setSession: (s) => set(s),
   setConnected: (connected) => set({ connected }),
   setMembers: (members) => set({ members }),
@@ -41,10 +44,10 @@ export const useStore = create((set) => ({
       incomingAxis: axis ?? st.incomingAxis,
       incomingDir: dir ?? st.incomingDir,
     })),
-  commitIncoming: () =>
+  commitIncoming: (fullscreen = false) =>
     set((st) =>
       st.incoming
-        ? { heldImage: { ...st.incoming }, incoming: null, incomingProgress: 0 }
+        ? { heldImage: { ...st.incoming }, incoming: null, incomingProgress: 0, pendingFullscreen: fullscreen }
         : {}
     ),
   cancelIncoming: () => set({ incoming: null, incomingProgress: 0 }),
@@ -57,5 +60,6 @@ export const useStore = create((set) => ({
       fullscreenImage: null,
       incoming: null,
       incomingProgress: 0,
+      pendingFullscreen: false,
     }),
 }));

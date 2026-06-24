@@ -78,7 +78,7 @@ export function useRoom(roomId) {
     const onCommit = (p) => {
       if (!isForMe(p)) return;
       const cur = useStore.getState().incomingProgress;
-      tweenProgress(cur, 1, 180, (v) => setIncomingProgress(v), () => commitIncoming());
+      tweenProgress(cur, 1, 180, (v) => setIncomingProgress(v), () => commitIncoming(!!p.fullscreen));
     };
 
     const onCancel = (p) => {

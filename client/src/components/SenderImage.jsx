@@ -29,6 +29,7 @@ const CompressIcon = () => (
 export default function SenderImage({ targetId }) {
   const held = useStore((s) => s.heldImage);
   const setHeldImage = useStore((s) => s.setHeldImage);
+  const pendingFullscreen = useStore((s) => s.pendingFullscreen);
 
   const x = useMotionValue(0);
   const y = useMotionValue(0);
@@ -58,6 +59,14 @@ export default function SenderImage({ targetId }) {
     window.addEventListener('keydown', onKey);
     return () => window.removeEventListener('keydown', onKey);
   }, [isFullscreen]);
+
+  // Auto-enter fullscreen when the sender transferred while in fullscreen mode.
+  useEffect(() => {
+    if (pendingFullscreen && held) {
+      setIsFullscreen(true);
+      useStore.setState({ pendingFullscreen: false });
+    }
+  }, [held?.id, pendingFullscreen]);
 
   if (!held) return null;
 
@@ -112,7 +121,7 @@ export default function SenderImage({ targetId }) {
   function commit(axis, dir) {
     if (navigator.vibrate) navigator.vibrate([6, 20, 6]);
     emitProgress(1, axis, dir);
-    socket.emit('transfer:commit', { imageId: held.id, targetId });
+    socket.emit('transfer:commit', { imageId: held.id, targetId, fullscreen: isFullscreen });
     const off = axis === 'x'
       ? Math.sign(dir) * window.innerWidth
       : Math.sign(dir) * window.innerHeight;
